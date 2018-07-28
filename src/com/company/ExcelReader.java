@@ -112,9 +112,7 @@ public class ExcelReader {
         long diffInSeconds = java.time.Duration.between(dateTime1, dateTime2).getSeconds();
         long diffInMinutes = java.time.Duration.between(dateTime1, dateTime2).toMinutes();
         long diffInHours = java.time.Duration.between(dateTime1, dateTime2).toHours();
-        System.out.println("Hours: " + diffInHours);
-        Time time1 = new Time(20, 40);
-        System.out.println(time1.DifferenceMin(22, 46));*/
+        System.out.println("Hours: " + diffInHours);*/
 
     }
 }

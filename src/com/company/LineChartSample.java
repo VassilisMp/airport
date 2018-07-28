@@ -64,9 +64,6 @@ public class LineChartSample extends Application {
         XYChart.Series series = new XYChart.Series();
         series.setName("Number of flights");
         //populating the series with data
-        /*for(Map.Entry<Time, Integer> entry: excelReader.FlightMap.entrySet()) {
-            series.getData().add(new XYChart.Data(entry.getKey().toString(), entry.getValue()));
-        }*/
         boolean has = false;
         for (int i = 0; i < 24; i++) {
             for (int j = 0; j < 60; j+=5) {
