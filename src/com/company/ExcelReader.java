@@ -13,11 +13,13 @@ import java.util.List;
 import java.util.Map;
 
 
-public class ExcelReader {
-    public static final String XLSX_FILE_PATH = "./Multi-Day Flightplan.xlsx";
-    public static Map<LocalTime, Integer> FlightMap;
+class ExcelReader {
+    private static final String XLSX_FILE_PATH = "./Multi-Day Flightplan.xlsx";
+    static Map<LocalTime, Integer> FlightMap;
+    static List<Flight> flightList;
+    static int totalSeats;
 
-    public static void run() {
+    static void run() {
 
         File file = new File(XLSX_FILE_PATH);
         if (!file.exists()) {
@@ -43,8 +45,8 @@ public class ExcelReader {
         int value;
         int seats;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyyHH:mm");
-        List<Flight> flightList = new ArrayList<>();
-        System.out.println("Inserting times in list..");
+        flightList = new ArrayList<>();
+        System.out.println("Creating list..");
         for (Row row: sheet) {
             //STA retrieve
             Cell cell = row.getCell(9);
@@ -54,6 +56,7 @@ public class ExcelReader {
             //seats retrieve
             cell = row.getCell(11);
             seats = (int)cell.getNumericCellValue();
+            totalSeats += seats;
             if (seats<=0)
                 continue;
             //day retrieve
@@ -67,13 +70,13 @@ public class ExcelReader {
             LocalDateTime dateTime = LocalDateTime.parse(date + STA, formatter);
             flightList.add(new Flight(dateTime, Day, seats));
         }
-        System.out.println("sorting list..");
+        /*System.out.println("sorting list..");
         flightList.sort((f1, f2) -> {
             if(f1.getTime().equals(f2.getTime())){
                 return 0;
             }
             return f1.getTime().compareTo(f2.getTime());
-        });
+        });*/
         FlightMap = new HashMap<>(flightList.size());
         System.out.println("creating map..");
         for (Flight flight: flightList) {
@@ -87,13 +90,11 @@ public class ExcelReader {
             else
                 FlightMap.put(flight.getTime(), flight.getSeats());
         }
-        int flights = 0;
-        for(Map.Entry<LocalTime, Integer> entry: FlightMap.entrySet()) {
-            //System.out.println(entry.getKey() + "  " + entry.getValue());
-            flights += entry.getValue();
-        }
+        /*for(Map.Entry<LocalTime, Integer> entry: FlightMap.entrySet()) {
+            System.out.println(entry.getKey() + "  " + entry.getValue());
+        }*/
         System.out.println("map size:" + FlightMap.size());
-        System.out.println("seats num:" + flights);
+        System.out.println("seats num:" + totalSeats);
 
         // Closing the workbook
         try {
