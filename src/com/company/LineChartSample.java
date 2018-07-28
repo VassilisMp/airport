@@ -16,6 +16,7 @@ import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
 
 import java.time.Duration;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -33,8 +34,8 @@ public class LineChartSample extends Application {
         if((hours>23 || hours>18 || hours<9) || min>59 || (d>23 || d<6))
             return 0;
         if (d==0) return 0;
-        for(Map.Entry<Time, Integer> entry: ExcelReader.FlightMap.entrySet()) {
-            if(entry.getKey().DifferenceMin(hours, min)<=(d*60)) {
+        for(Map.Entry<LocalTime, Integer> entry: ExcelReader.FlightMap.entrySet()) {
+            if(minDif(entry.getKey(), hours, min)<=(d*60)) {
                 //System.out.println(entry.getKey().DifferenceMin(hours, min));
                 fitness += entry.getValue();
             }
@@ -65,18 +66,18 @@ public class LineChartSample extends Application {
         }*/
         boolean has = false;
         for (int i = 0; i < 24; i++) {
-            for (int j = 0; j < 60; j++) {
+            for (int j = 0; j < 60; j+=5) {
                 has = false;
-                String time = String.format("%02d:%02d", i, j);
-                for(Map.Entry<Time, Integer> entry: ExcelReader.FlightMap.entrySet()) {
-                    if(entry.getKey().toString().equals(time)) {
-                        //System.out.println("true");
+                LocalTime time = LocalTime.of(i, j);
+                for(Map.Entry<LocalTime, Integer> entry: ExcelReader.FlightMap.entrySet()) {
+                    if(entry.getKey().equals(time)) {
+                        //System.out.println(entry.getValue());
                         series.getData().add(new XYChart.Data(entry.getKey().toString(), entry.getValue()));
                         has = true;
                     }
                 }
                 if(!has)
-                    series.getData().add(new XYChart.Data(time, 0));
+                    series.getData().add(new XYChart.Data(time.toString(), 0));
             }
         }
 
@@ -116,5 +117,15 @@ public class LineChartSample extends Application {
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    public static int minDif(LocalTime time, int hours, int mins) {
+        int tMins = (time.getHour()*60) + time.getMinute();
+        mins += hours*60;
+        if(mins<tMins) {
+            return ((24 * 60) - tMins) + mins;
+        }
+        else
+            return mins - tMins;
     }
 }

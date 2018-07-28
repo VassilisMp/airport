@@ -1,38 +1,30 @@
 package com.company;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public class Flight {
-    //private LocalDateTime dateTime;
-    private Date date;
+    private LocalDateTime dateTime;
     private String day;
-    private Time time;
     private int seats;
 
-    public Flight(Date date, String day, Time time, int seats) {
-        this.date = date;
+    public Flight(LocalDateTime dateTime, String day, int seats) {
+        this.dateTime = dateTime;
         this.day = day;
-        this.time = time;
         this.seats = seats;
     }
 
-    /*public Flight(LocalDateTime dateTime, String day, Time time, int seats) {
-        this.dateTime = dateTime;
-        this.day = day;
-        this.time = time;
-        this.seats = seats;
-    }*/
-
-    public Date getDate() {
-        return date;
+    public LocalDate getDate() {
+        return dateTime.toLocalDate();
     }
 
     public String getDay() {
         return day;
     }
 
-    public Time getTime() {
-        return time;
+    public LocalTime getTime() {
+        return dateTime.toLocalTime();
     }
 
     public int getSeats() {
@@ -41,6 +33,6 @@ public class Flight {
 
     @Override
     public String toString() {
-        return date + " " + day + " " + time + " " + seats;
+        return getDate() + " " + day + " " + getTime() + " " + seats;
     }
 }
