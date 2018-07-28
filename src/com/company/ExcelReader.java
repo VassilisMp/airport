@@ -11,17 +11,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 public class ExcelReader {
-    public static final String SAMPLE_XLSX_FILE_PATH = "./Multi-Day Flightplan.xlsx";
+    public static final String XLSX_FILE_PATH = "./Multi-Day Flightplan.xlsx";
     public static Map<LocalTime, Integer> FlightMap;
 
     public static void run() {
 
-        File file = new File(SAMPLE_XLSX_FILE_PATH);
+        File file = new File(XLSX_FILE_PATH);
         if (!file.exists()) {
             System.out.println("file doesn't exist\nexiting..");
             System.exit(-1);
@@ -41,17 +39,17 @@ public class ExcelReader {
         DataFormatter dataFormatter = new DataFormatter();
         String date;
         String Day;
-        String STD;
+        String STA;
         int value;
         int seats;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyyHH:mm");
         List<Flight> flightList = new ArrayList<>();
         System.out.println("Inserting times in list..");
         for (Row row: sheet) {
-            //STD retrieve
+            //STA retrieve
             Cell cell = row.getCell(9);
-            STD = dataFormatter.formatCellValue(cell);
-            if (STD.equals("") || STD.equals("STA"))
+            STA = dataFormatter.formatCellValue(cell);
+            if (STA.equals("") || STA.equals("STA"))
                 continue;
             //seats retrieve
             cell = row.getCell(11);
@@ -66,8 +64,8 @@ public class ExcelReader {
             cell = row.getCell(1);
             date = dataFormatter.formatCellValue(cell);
             //System.out.println(date);
-            LocalDateTime dateTime1= LocalDateTime.parse(date + STD, formatter);
-            flightList.add(new Flight(dateTime1, Day, seats));
+            LocalDateTime dateTime = LocalDateTime.parse(date + STA, formatter);
+            flightList.add(new Flight(dateTime, Day, seats));
         }
         System.out.println("sorting list..");
         flightList.sort((f1, f2) -> {
@@ -96,7 +94,6 @@ public class ExcelReader {
         }
         System.out.println("map size:" + FlightMap.size());
         System.out.println("seats num:" + flights);
-        //System.out.println(new Time(0, 20).DifferenceMin(20, 20)/60);
 
         // Closing the workbook
         try {

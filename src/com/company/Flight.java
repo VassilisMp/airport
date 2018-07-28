@@ -9,13 +9,13 @@ public class Flight {
     private String day;
     private int seats;
 
-    public Flight(LocalDateTime dateTime, String day, int seats) {
+    Flight(LocalDateTime dateTime, String day, int seats) {
         this.dateTime = dateTime;
         this.day = day;
         this.seats = seats;
     }
 
-    public LocalDate getDate() {
+    LocalDate getDate() {
         return dateTime.toLocalDate();
     }
 
@@ -23,11 +23,11 @@ public class Flight {
         return day;
     }
 
-    public LocalTime getTime() {
+    LocalTime getTime() {
         return dateTime.toLocalTime();
     }
 
-    public int getSeats() {
+    int getSeats() {
         return seats;
     }
 

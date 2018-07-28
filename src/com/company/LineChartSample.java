@@ -24,26 +24,29 @@ public class LineChartSample extends Application {
     public static final int tournamentSampleSize = 5;
     public static final int populationSize = 200;
     private static final int runtime = 10; //seconds;
+    //Hours Range
+    final IntRange hRange = IntRange.of(6, 10);
+    //Minutes Range (sliced in pieces of 5 minutes) ((number * 5) to get minutes) look at **
+    final IntRange mRange = IntRange.of(0, 11);
+    //work Hours
+    final IntRange dRange = IntRange.of(4, 8);
 
     private static Integer getFitness(final Genotype gt) {
         int fitness = 0;
         int hours, min, d;
         hours = ((NumericGene) gt.get(0, 0)).intValue();
-        min = ((NumericGene) gt.get(0, 1)).intValue();
-        d = ((NumericGene) gt.get(0, 2)).intValue();
-        if((hours>23 || hours>18 || hours<9) || min>59 || (d>23 || d<6))
-            return 0;
-        if (d==0) return 0;
+        min = ((NumericGene) gt.get(1, 0)).intValue() * 5;//here **
+        d = ((NumericGene) gt.get(2, 0)).intValue();
         for(Map.Entry<LocalTime, Integer> entry: ExcelReader.FlightMap.entrySet()) {
             if(minDif(entry.getKey(), hours, min)<=(d*60)) {
                 //System.out.println(entry.getKey().DifferenceMin(hours, min));
                 fitness += entry.getValue();
             }
         }
-        fitness = (int)( ((double)fitness)/((d*192541)/24)*100);
-        System.out.println("[[[" + hours + "],[" + min + "]" + d +"]] --> " + fitness);
-        return fitness;
-        //return fitness/d;
+        //fitness = (int)( ((double)fitness)/((d*192541)/24)*100);
+        //return fitness;
+        //System.out.println("[[[" + hours + "],[" + min + "]" + d +"]] --> " + fitness);
+        return fitness/d;
     }
     @Override public void start(Stage stage) {
         ExcelReader.run();
@@ -86,18 +89,16 @@ public class LineChartSample extends Application {
 
         stage.setScene(scene);
         stage.show();
-        System.out.println("static main");
-        final IntRange hRange = IntRange.of(0,59);
-        final IntRange mRange = IntRange.of(9,10);
-        IntegerGene ig = IntegerGene.of(hRange);
-        System.out.println("max: " + ig.getMax());
-        Chromosome<IntegerGene> chromosome = IntegerChromosome.of(IntegerGene.of(hRange), IntegerGene.of(mRange), IntegerGene.of(4, 8));
-
+        Genotype<IntegerGene> gt = Genotype.of(
+                IntegerChromosome.of(IntegerGene.of(hRange)),
+                IntegerChromosome.of(IntegerGene.of(mRange)),
+                IntegerChromosome.of(IntegerGene.of(dRange))
+        );
         final Selector<IntegerGene, Integer> selector = new EliteSelector<IntegerGene, Integer>(
                 // Number of best individuals preserved for next generation: elites
                 1, new TournamentSelector<>(tournamentSampleSize));
         Engine<IntegerGene, Integer> engine
-                = Engine.builder(LineChartSample::getFitness, chromosome)
+                = Engine.builder(LineChartSample::getFitness, gt)
                 .populationSize(populationSize)
                 .optimize(Optimize.MAXIMUM)
                 .alterers(new Mutator<>(0.05), new MeanAlterer<>(0.03))
@@ -105,7 +106,7 @@ public class LineChartSample extends Application {
                 .build();
 
         EvolutionStatistics<Integer, ?> statistics = EvolutionStatistics.ofNumber();
-        final Phenotype best = (Phenotype)engine.stream()
+        final Phenotype best = engine.stream()
                 .limit(Limits.byFitnessThreshold (192541))
                 .limit(Limits.byExecutionTime ( Duration.ofSeconds(runtime)))
                 .peek(statistics)
@@ -113,10 +114,6 @@ public class LineChartSample extends Application {
         System.out.println(statistics);
         System.out.println(best);
         System.out.println(192541);
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 
     public static int minDif(LocalTime time, int hours, int mins) {
