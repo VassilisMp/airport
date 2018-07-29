@@ -15,9 +15,11 @@ import java.util.Map;
 
 class ExcelReader {
     private static final String XLSX_FILE_PATH = "./Multi-Day Flightplan.xlsx";
+    //all variables of this class get values after running run() method
     static Map<LocalTime, Integer> FlightMap;
     static List<Flight> flightList;
     static int totalSeats;
+    static int diffTimesNum;
 
     static void run() {
 
@@ -90,6 +92,7 @@ class ExcelReader {
             else
                 FlightMap.put(flight.getTime(), flight.getSeats());
         }
+        diffTimesNum = FlightMap.size();
         /*for(Map.Entry<LocalTime, Integer> entry: FlightMap.entrySet()) {
             System.out.println(entry.getKey() + "  " + entry.getValue());
         }*/
