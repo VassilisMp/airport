@@ -10,8 +10,10 @@ public class Main {
         //System.out.println("Opening chart");
         //new Thread(() -> {Application.launch(FlightChart.class);}).start();
         System.out.println("Running GA");
-        GA.ld = LocalDate.of(2018, 7, 1);
-        int[] best = GA.run(GA::getFitnessDay);
+        //GA.ld = LocalDate.of(2018, 7, 30);
+        System.out.println("Making List for GA use");
+        GA.flightList = Flight.flightList(LocalDate.of(2018, 7, 30), LocalDate.of(2018, 7, 30));
+        int[] best = GA.run(GA::getFitnessByDays);
         SpecWHoursInfo(best[0], best[1], best[2]);
     }
 

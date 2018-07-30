@@ -10,6 +10,7 @@ import io.jenetics.util.IntRange;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -25,7 +26,10 @@ class GA {
     private static final IntRange mRange = IntRange.of(0, 11);
     //work Hours
     private static final IntRange dRange = IntRange.of(4, 4);
-    static LocalDate ld;
+    //specific Date for GA search
+    //static LocalDate ld;
+    //part of the whole list that contains flights for specific GA search
+    static List<Flight> flightList;
 
     static Integer getFitness(final Genotype gt) {
         int fitness = 0;
@@ -45,18 +49,17 @@ class GA {
         return fitness/d;
     }
 
-    static Integer getFitnessDay(final Genotype gt) {
+    static Integer getFitnessByDays(final Genotype gt) {
         int fitness = 0;
         int hours, min, d;
         hours = ((NumericGene) gt.get(0, 0)).intValue();
         min = ((NumericGene) gt.get(1, 0)).intValue() * 5;//here **
         d = ((NumericGene) gt.get(2, 0)).intValue();
-        for(Flight flight: ExcelReader.flightList) {
-            if (flight.getDate().equals(ld))
-                if(minDif(flight.getTime(), hours, min)<=(d*60)) {
-                    //System.out.println(entry.getKey().DifferenceMin(hours, min));
-                    fitness += flight.getSeats();
-                }
+        for(Flight flight: flightList) {
+            if(minDif(flight.getTime(), hours, min)<=(d*60)) {
+                //System.out.println(entry.getKey().DifferenceMin(hours, min));
+                fitness += flight.getSeats();
+            }
         }
         //fitness = (int)( ((double)fitness)/((d*192541)/24)*100);
         //return fitness;
