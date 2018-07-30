@@ -10,6 +10,7 @@ import io.jenetics.util.IntRange;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -30,6 +31,7 @@ class GA {
     //static LocalDate ld;
     //part of the whole list that contains flights for specific GA search
     static List<Flight> flightList;
+    static Map<LocalTime, Integer> timesMap;
 
     static Integer getFitness(final Genotype gt) {
         int fitness = 0;
@@ -37,7 +39,7 @@ class GA {
         hours = ((NumericGene) gt.get(0, 0)).intValue();
         min = ((NumericGene) gt.get(1, 0)).intValue() * 5;//here **
         d = ((NumericGene) gt.get(2, 0)).intValue();
-        for(Map.Entry<LocalTime, Integer> entry: ExcelReader.FlightMap.entrySet()) {
+        for(Map.Entry<LocalTime, Integer> entry: timesMap.entrySet()) {
             if(minDif(entry.getKey(), hours, min)<=(d*60)) {
                 //System.out.println(entry.getKey().DifferenceMin(hours, min));
                 fitness += entry.getValue();
@@ -45,7 +47,7 @@ class GA {
         }
         //fitness = (int)( ((double)fitness)/((d*192541)/24)*100);
         //return fitness;
-        System.out.println("[[[" + hours + "],[" + min + "]" + d +"]] --> " + fitness/d);
+        //System.out.println("[[[" + hours + "],[" + min + "]" + d +"]] --> " + fitness/d);
         return fitness/d;
     }
 
@@ -63,7 +65,7 @@ class GA {
         }
         //fitness = (int)( ((double)fitness)/((d*192541)/24)*100);
         //return fitness;
-        System.out.println("[[[" + hours + "],[" + min + "]" + d +"]] --> " + fitness/d);
+        //System.out.println("[[[" + hours + "],[" + min + "]" + d +"]] --> " + fitness/d);
         return fitness/d;
     }
 
@@ -89,9 +91,9 @@ class GA {
                 //.limit(Limits.byFitnessThreshold (ExcelReader.totalSeats))
                 .limit(Limits.byExecutionTime ( Duration.ofSeconds(runtime)))
                 .limit(Limits.bySteadyFitness(1000))
-                .peek(statistics)
+                //.peek(statistics)
                 .collect(EvolutionResult.toBestPhenotype());
-        System.out.println(statistics);
+        //System.out.println(statistics);
         System.out.println(best);
         //hours
         array[0] = ((NumericGene) best.getGenotype().get(0, 0)).intValue();
@@ -100,7 +102,7 @@ class GA {
         //duration
         array[2] = ((NumericGene) best.getGenotype().get(2, 0)).intValue();
         //fitness
-        array[3] = getFitness(best.getGenotype());
+        array[3] = getFitnessByDays(best.getGenotype());
         return array;
     }
 
@@ -112,5 +114,22 @@ class GA {
         }
         else
             return mins - tMins;
+    }
+
+    static List<Flight> flightList (LocalDate sDate, LocalDate eDate){
+        List<Flight> list = new ArrayList<>();
+        if (eDate == null)
+            for(Flight flight: ExcelReader.flightList) {
+                if(flight.getDate().isEqual(sDate))
+                    list.add(flight);
+            }
+        else
+            for(Flight flight: ExcelReader.flightList) {
+                if(flight.getDate().isEqual(sDate)
+                        || flight.getDate().isEqual(eDate)
+                        || (flight.getDate().isAfter(sDate) && flight.getDate().isBefore(eDate)) )
+                    list.add(flight);
+            }
+        return list;
     }
 }

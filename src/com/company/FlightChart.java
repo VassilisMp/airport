@@ -33,7 +33,7 @@ public class FlightChart extends Application {
             for (int j = 0; j < 60; j += 5) {
                 has = false;
                 LocalTime time = LocalTime.of(i, j);
-                for (Map.Entry<LocalTime, Integer> entry : ExcelReader.FlightMap.entrySet()) {
+                for (Map.Entry<LocalTime, Integer> entry : GA.timesMap.entrySet()) {
                     if (entry.getKey().equals(time)) {
                         //System.out.println(entry.getValue());
                         //noinspection unchecked

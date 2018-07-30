@@ -15,10 +15,8 @@ import java.util.Map;
 
 class ExcelReader {
     private static final String XLSX_FILE_PATH = "./Multi-Day Flightplan.xlsx";
-    //all variables of this class get values after running run() method
-    static Map<LocalTime, Integer> FlightMap;
+    //some variables of this class get values after running run() method, others from else
     static List<Flight> flightList;
-    static int totalSeats;
     static int diffTimesNum;
 
     static void run() {
@@ -44,10 +42,9 @@ class ExcelReader {
         String date;
         String Day;
         String STA;
-        int value;
         int seats;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyyHH:mm");
-        flightList = new ArrayList<>();
+        flightList = new FlightList();
         System.out.println("Creating list..");
         for (Row row: sheet) {
             //STA retrieve
@@ -58,7 +55,6 @@ class ExcelReader {
             //seats retrieve
             cell = row.getCell(11);
             seats = (int)cell.getNumericCellValue();
-            totalSeats += seats;
             if (seats<=0)
                 continue;
             //day retrieve
@@ -79,25 +75,6 @@ class ExcelReader {
             }
             return f1.getTime().compareTo(f2.getTime());
         });*/
-        FlightMap = new HashMap<>(flightList.size());
-        System.out.println("creating map..");
-        for (Flight flight: flightList) {
-            //System.out.println(flight);
-            if(FlightMap.containsKey(flight.getTime())) {
-                value = FlightMap.get(flight.getTime());
-                FlightMap.replace(flight.getTime(), value+flight.getSeats());
-                if(value == FlightMap.get(flight.getTime()))
-                    System.out.println("value didn't change");
-            }
-            else
-                FlightMap.put(flight.getTime(), flight.getSeats());
-        }
-        diffTimesNum = FlightMap.size();
-        /*for(Map.Entry<LocalTime, Integer> entry: FlightMap.entrySet()) {
-            System.out.println(entry.getKey() + "  " + entry.getValue());
-        }*/
-        System.out.println("map size:" + FlightMap.size());
-        System.out.println("seats num:" + totalSeats);
 
         // Closing the workbook
         try {
@@ -117,6 +94,29 @@ class ExcelReader {
         long diffInMinutes = java.time.Duration.between(dateTime1, dateTime2).toMinutes();
         long diffInHours = java.time.Duration.between(dateTime1, dateTime2).toHours();
         System.out.println("Hours: " + diffInHours);*/
+    }
 
+    static Map<LocalTime, Integer> TimesMap(List<Flight> flightList) {
+        int value;
+        Map<LocalTime, Integer> timesMap = new HashMap<>(flightList.size());
+        System.out.println("creating map..");
+        for (Flight flight: flightList) {
+            //System.out.println(flight);
+            if(timesMap.containsKey(flight.getTime())) {
+                value = timesMap.get(flight.getTime());
+                timesMap.replace(flight.getTime(), value+flight.getSeats());
+                /*if(value == timesMap.get(flight.getTime()))
+                    System.out.println("value didn't change");*/
+            }
+            else
+                timesMap.put(flight.getTime(), flight.getSeats());
+        }
+        diffTimesNum = timesMap.size();
+        /*for(Map.Entry<LocalTime, Integer> entry: timesMap.entrySet()) {
+            System.out.println(entry.getKey() + "  " + entry.getValue());
+        }*/
+        //System.out.println("map size:" + timesMap.size());
+        //System.out.println("seats num:" + totalSeats);
+        return timesMap;
     }
 }
