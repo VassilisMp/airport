@@ -69,7 +69,7 @@ class GA {
         return fitness/d;
     }
 
-    static int[] run(Function<Genotype<IntegerGene>, Integer> ff) {
+    static Solution run(Function<Genotype<IntegerGene>, Integer> ff) {
         int array[] = new int[4];
         Genotype<IntegerGene> gt = Genotype.of(
                 IntegerChromosome.of(IntegerGene.of(hRange)),
@@ -94,16 +94,17 @@ class GA {
                 //.peek(statistics)
                 .collect(EvolutionResult.toBestPhenotype());
         //System.out.println(statistics);
-        System.out.println(best);
+        //System.out.println(best);
         //hours
-        array[0] = ((NumericGene) best.getGenotype().get(0, 0)).intValue();
+        int hour = ((NumericGene) best.getGenotype().get(0, 0)).intValue();
         //mins
-        array[1] = ((NumericGene) best.getGenotype().get(1, 0)).intValue() * 5;
+        int min = ((NumericGene) best.getGenotype().get(1, 0)).intValue() * 5;
         //duration
-        array[2] = ((NumericGene) best.getGenotype().get(2, 0)).intValue();
+        int d = ((NumericGene) best.getGenotype().get(2, 0)).intValue();
         //fitness
-        array[3] = getFitnessByDays(best.getGenotype());
-        return array;
+        int fitness = getFitnessByDays(best.getGenotype());
+        Solution sol = new Solution(LocalTime.of(hour, min), d, fitness);
+        return sol;
     }
 
     static int minDif(LocalTime time, int hours, int mins) {
@@ -114,6 +115,16 @@ class GA {
         }
         else
             return mins - tMins;
+    }
+
+    static int minDif(LocalTime time, LocalTime time2) {
+        int mins2 = (time2.getHour()*60) + time2.getMinute();
+        int mins = (time.getHour()*60) + time.getMinute();
+        if(mins2<mins) {
+            return ((24 * 60) - mins) + mins2;
+        }
+        else
+            return mins2 - mins;
     }
 
     static List<Flight> flightList (LocalDate sDate, LocalDate eDate){
