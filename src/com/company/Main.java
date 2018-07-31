@@ -2,13 +2,22 @@ package com.company;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
     public static void main(String args[]) {
         ExcelReader.run();
+        System.out.println(ExcelReader.flightList.size());
         //System.out.println("Opening chart");
         //new Thread(() -> {Application.launch(FlightChart.class);}).start();
         //GA.ld = LocalDate.of(2018, 7, 30);
+        List<Solution> solutionList = new ArrayList<>(31);
+        for (int i = 1; i <= 31; i++) {
+            System.out.println(i + " of " + 31);
+            GA.flightList = GA.flightList(LocalDate.of(2018, 7, 1), null);
+            solutionList.add(GA.run(GA::getFitnessByDays));
+        }
         System.out.println("Making List for GA use");
         GA.flightList = GA.flightList(LocalDate.of(2018, 7, 1), LocalDate.of(2018, 7, 31));
         //GA.timesMap = ExcelReader.TimesMap(GA.flightList);

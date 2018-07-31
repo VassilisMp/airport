@@ -2,12 +2,12 @@ package com.company;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,32 +38,30 @@ class ExcelReader {
         // Getting the Sheet at index zero
         Sheet sheet = workbook.getSheetAt(0);
         // Create a DataFormatter to format and get each cell's value as String
-        DataFormatter dataFormatter = new DataFormatter();
-        String date;
-        String Day;
-        String STA;
-        int seats;
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyyHH:mm");
         flightList = new FlightList();
         System.out.println("Creating list..");
         for (Row row: sheet) {
+            DataFormatter dataFormatter = new DataFormatter();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyyHH:mm");
+            //date retrieve
+            Cell cell = row.getCell(1);
+            String date = dataFormatter.formatCellValue(cell);
+            if (date.equals(""))
+                break;
             //STA retrieve
-            Cell cell = row.getCell(9);
-            STA = dataFormatter.formatCellValue(cell);
+            cell = row.getCell(9);
+            String STA = dataFormatter.formatCellValue(cell);
             if (STA.equals("") || STA.equals("STA"))
                 continue;
             //seats retrieve
             cell = row.getCell(11);
-            seats = (int)cell.getNumericCellValue();
+            int seats = (int)cell.getNumericCellValue();
             if (seats<=0)
                 continue;
             //day retrieve
             cell = row.getCell(2);
-            Day = dataFormatter.formatCellValue(cell);
+            String Day = dataFormatter.formatCellValue(cell);
             //System.out.println(Day);
-            //date retrieve
-            cell = row.getCell(1);
-            date = dataFormatter.formatCellValue(cell);
             //System.out.println(date);
             LocalDateTime dateTime = LocalDateTime.parse(date + STA, formatter);
             flightList.add(new Flight(dateTime, Day, seats));
