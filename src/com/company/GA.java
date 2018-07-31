@@ -70,7 +70,6 @@ class GA {
     }
 
     static Solution run(Function<Genotype<IntegerGene>, Integer> ff) {
-        int array[] = new int[4];
         Genotype<IntegerGene> gt = Genotype.of(
                 IntegerChromosome.of(IntegerGene.of(hRange)),
                 IntegerChromosome.of(IntegerGene.of(mRange)),
@@ -103,8 +102,7 @@ class GA {
         int d = ((NumericGene) best.getGenotype().get(2, 0)).intValue();
         //fitness
         int fitness = getFitnessByDays(best.getGenotype());
-        Solution sol = new Solution(LocalTime.of(hour, min), d, fitness);
-        return sol;
+        return new Solution(LocalTime.of(hour, min), d, fitness);
     }
 
     static int minDif(LocalTime time, int hours, int mins) {
@@ -127,6 +125,7 @@ class GA {
             return mins2 - mins;
     }
 
+    //List of flights under some restrictions
     static List<Flight> flightList (LocalDate sDate, LocalDate eDate){
         List<Flight> list = new ArrayList<>();
         if (eDate == null)

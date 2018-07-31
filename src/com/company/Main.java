@@ -7,15 +7,19 @@ import java.util.List;
 
 public class Main {
     public static void main(String args[]) {
+        LocalTime t1 = LocalTime.of(23, 0);
+        LocalTime t2 = LocalTime.of(0, 0);
+        System.out.println(t1.isAfter(t2));
         ExcelReader.run();
         System.out.println(ExcelReader.flightList.size());
+        System.out.println(ExcelReader.flightList.get(0).getDay());
         //System.out.println("Opening chart");
         //new Thread(() -> {Application.launch(FlightChart.class);}).start();
         //GA.ld = LocalDate.of(2018, 7, 30);
         List<Solution> solutionList = new ArrayList<>(31);
         for (int i = 1; i <= 31; i++) {
             System.out.println(i + " of " + 31);
-            GA.flightList = GA.flightList(LocalDate.of(2018, 7, 1), null);
+            GA.flightList = GA.flightList(LocalDate.of(2018, 7, i), null);
             solutionList.add(GA.run(GA::getFitnessByDays));
         }
         System.out.println("Making List for GA use");
@@ -25,12 +29,12 @@ public class Main {
         Solution best = GA.run(GA::getFitnessByDays);
         //###############
         // I must make a class for "best"
-        SpecWHoursInfo(best);
+        specWHoursInfo(best);
         System.out.println();
         System.out.println(((FlightList)ExcelReader.flightList).getTotalSeats());
     }
 
-    private static FlightList SpecWHoursInfo(Solution sol) {
+    private static FlightList specWHoursInfo(Solution sol) {
         LocalTime time = sol.getTime();
         int d = sol.getDuration();
         int fitness = sol.getFitness();

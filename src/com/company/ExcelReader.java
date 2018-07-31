@@ -5,6 +5,7 @@ import org.apache.poi.ss.usermodel.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -60,11 +61,16 @@ class ExcelReader {
                 continue;
             //day retrieve
             cell = row.getCell(2);
-            String Day = dataFormatter.formatCellValue(cell);
+            String Day = dataFormatter.formatCellValue(cell); //################################# I must make String Day to Enum DayOfWeek
+            DayOfWeek eDay = DayStrToEnum(Day);
+            if (eDay==null) {
+                System.out.println("String Day to DayOfWeek Enum error");
+                continue;
+            }
             //System.out.println(Day);
             //System.out.println(date);
             LocalDateTime dateTime = LocalDateTime.parse(date + STA, formatter);
-            flightList.add(new Flight(dateTime, Day, seats));
+            flightList.add(new Flight(dateTime, eDay, seats));
         }
         /*System.out.println("sorting list..");
         flightList.sort((f1, f2) -> {
@@ -116,5 +122,18 @@ class ExcelReader {
         //System.out.println("map size:" + timesMap.size());
         //System.out.println("seats num:" + totalSeats);
         return timesMap;
+    }
+
+    static DayOfWeek DayStrToEnum (String day) {
+        switch (day) {
+            case "SUN": return DayOfWeek.SUNDAY;
+            case "MON": return DayOfWeek.MONDAY;
+            case "TUE": return DayOfWeek.TUESDAY;
+            case "WED": return DayOfWeek.WEDNESDAY;
+            case "THU": return DayOfWeek.THURSDAY;
+            case "FRI": return DayOfWeek.FRIDAY;
+            case "SAT": return DayOfWeek.SATURDAY;
+            default: return null;
+        }
     }
 }
