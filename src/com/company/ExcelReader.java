@@ -17,7 +17,7 @@ import java.util.Map;
 class ExcelReader {
     private static final String XLSX_FILE_PATH = "./Multi-Day Flightplan.xlsx";
     //some variables of this class get values after running run() method, others from else
-    static List<Flight> flightList;
+    static FlightList flightList;
     static int diffTimesNum;
 
     static void run() {

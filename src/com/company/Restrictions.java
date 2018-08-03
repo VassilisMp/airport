@@ -5,8 +5,9 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
-class Restrictions {
+class Restrictions implements Predicate<Flight>{
     LocalDate sDate;
     LocalDate eDate;
     LocalDate[] dates;
@@ -60,5 +61,26 @@ class Restrictions {
 
     static boolean IsBetweenTime(LocalTime time, LocalTime sTime, LocalTime eTime) {
         return true;
+    }
+
+    @Override
+    public boolean test(Flight flight) {
+        if (days!=null) {
+            for (DayOfWeek day: days)
+                if (flight.getDay().equals(day))
+                    return true;
+        }
+        if(dates!=null)
+            for (LocalDate date: dates)
+                if(flight.getDate().isEqual(date))
+                    return true;
+        if(sTime!=null && eTime!=null)
+            if(IsBetweenTime(flight.getTime(), sTime, eTime))
+                return true;
+        if(sDate!=null && eDate!=null)
+            return flight.getDate().isEqual(sDate)
+                || flight.getDate().isEqual(eDate)
+                || (flight.getDate().isAfter(sDate) && flight.getDate().isBefore(eDate));
+        return false;
     }
 }

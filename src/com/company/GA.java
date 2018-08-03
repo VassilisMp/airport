@@ -23,21 +23,21 @@ class GA {
     private static final int runtime = 10; //seconds;
     //Hours Range
     private static final IntRange hRange = IntRange.of(8, 18);
-    //Minutes Range (sliced in pieces of 5 minutes) ((number * 5) to get minutes) look at **
+    //Minutes Range (sliced in pieces of 5 minutes) ((number * 5) to get actual minutes) look at **
     private static final IntRange mRange = IntRange.of(0, 11);
     //work Hours
     private static final IntRange dRange = IntRange.of(4, 4);
     //specific Date for GA search
     //static LocalDate ld;
     //part of the whole list that contains flights for specific GA search
-    static List<Flight> flightList;
+    static FlightList flightList;
     static Map<LocalTime, Integer> timesMap;
 
     static Integer getFitness(final Genotype gt) {
         int fitness = 0;
         int hours, min, d;
         hours = ((NumericGene) gt.get(0, 0)).intValue();
-        min = ((NumericGene) gt.get(1, 0)).intValue() * 5;//here **
+        min = ((NumericGene) gt.get(1, 0)).intValue() * 5;// ** here
         d = ((NumericGene) gt.get(2, 0)).intValue();
         for(Map.Entry<LocalTime, Integer> entry: timesMap.entrySet()) {
             if(minDif(entry.getKey(), hours, min)<=(d*60)) {
@@ -69,7 +69,7 @@ class GA {
         return fitness/d;
     }
 
-    static Solution run(Function<Genotype<IntegerGene>, Integer> ff) {
+    static Phenotype run(Function<Genotype<IntegerGene>, Integer> ff) {
         Genotype<IntegerGene> gt = Genotype.of(
                 IntegerChromosome.of(IntegerGene.of(hRange)),
                 IntegerChromosome.of(IntegerGene.of(mRange)),
@@ -94,15 +94,7 @@ class GA {
                 .collect(EvolutionResult.toBestPhenotype());
         //System.out.println(statistics);
         //System.out.println(best);
-        //hours
-        int hour = ((NumericGene) best.getGenotype().get(0, 0)).intValue();
-        //mins
-        int min = ((NumericGene) best.getGenotype().get(1, 0)).intValue() * 5;
-        //duration
-        int d = ((NumericGene) best.getGenotype().get(2, 0)).intValue();
-        //fitness
-        int fitness = getFitnessByDays(best.getGenotype());
-        return new Solution(LocalTime.of(hour, min), d, fitness);
+        return best;
     }
 
     static int minDif(LocalTime time, int hours, int mins) {
@@ -126,8 +118,8 @@ class GA {
     }
 
     //List of flights under some restrictions
-    static List<Flight> flightList (LocalDate sDate, LocalDate eDate){
-        List<Flight> list = new ArrayList<>();
+    static FlightList flightList (LocalDate sDate, LocalDate eDate){
+        FlightList list = new FlightList();
         if (eDate == null)
             for(Flight flight: ExcelReader.flightList) {
                 if(flight.getDate().isEqual(sDate))

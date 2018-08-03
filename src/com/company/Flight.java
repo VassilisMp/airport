@@ -1,11 +1,12 @@
 package com.company;
 
+import java.io.Serializable;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-public class Flight implements Comparable<Flight>, Cloneable{
+public class Flight implements Comparable<Flight>, Serializable {
     private LocalDateTime dateTime;
     private DayOfWeek day;
     private int seats;
@@ -40,18 +41,5 @@ public class Flight implements Comparable<Flight>, Cloneable{
     @Override
     public int compareTo(Flight o) {
         return dateTime.compareTo(o.dateTime);
-    }
-
-    @Override
-    protected Flight clone() {
-        Flight clone;
-        try{
-            clone = (Flight) super.clone();
-
-        }catch(CloneNotSupportedException e){
-            throw new RuntimeException(e); // won't happen
-        }
-
-        return clone;
     }
 }
