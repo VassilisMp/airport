@@ -8,12 +8,12 @@ import java.util.List;
 import java.util.function.Predicate;
 
 class Restrictions implements Predicate<Flight>{
-    LocalDate sDate;
-    LocalDate eDate;
-    LocalDate[] dates;
-    LocalTime sTime;
-    LocalTime eTime;
-    DayOfWeek[] days;
+    private LocalDate sDate;
+    private LocalDate eDate;
+    private LocalDate[] dates;
+    private LocalTime sTime;
+    private LocalTime eTime;
+    private DayOfWeek[] days;
 
     public Restrictions(LocalDate sDate, LocalDate eDate, LocalTime sTime, LocalTime eTime, LocalDate ...dates) {
         this.sDate = sDate;

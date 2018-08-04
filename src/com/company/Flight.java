@@ -35,7 +35,12 @@ public class Flight implements Comparable<Flight>, Serializable {
 
     @Override
     public String toString() {
-        return getDate() + " " + day + " " + getTime() + " " + seats;
+        return "Flight{" +
+                "date=" + getDate() +
+                ", day=" + day +
+                ", time=" + getTime() +
+                ", seats=" + seats +
+                '}';
     }
 
     @Override
